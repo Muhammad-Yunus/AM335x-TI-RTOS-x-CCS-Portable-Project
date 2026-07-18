@@ -17,17 +17,17 @@ SYSBIOS (TI-RTOS) project for **AM3352** (Antminer L3+ Control Board), similar t
                      │
                      │
                      │
-                     ┌─────┐
-                     │ BTN │  ← pushbutton normally-open
-                     └─────┘
+                  ┌─────┐
+                  │ BTN │  ← pushbutton normally-open
+                  └─────┘
                      │
                      (contact closes on press)
                      │
                      ├──────────── P9_12  (HEADER P9, pin 12)
                      │
-                     ┌─────┐
-                     │ 10k │  ← R_pulldown
-                     └─────┘
+                  ┌─────┐
+                  │ 10k │  ← R_pulldown
+                  └─────┘
                      │
    GND (HEADER P9 GND, e.g. P9 pin 1/2)
 ```
