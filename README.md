@@ -98,6 +98,7 @@ Quick summary:
 ### Communication
 
 - 🟧 [**`Examples/TIRTOS_AM3352_UART_ECHO/`**](./Examples/TIRTOS_AM3352_UART_ECHO/) — UART interrupt echo via SYS/BIOS Task: reads characters and echoes back with `echo> ` prefix. Demonstrates `Board_initUART()`, UART_read()/UART_write() in a task context.
+- 🟧 [**`Examples/TIRTOS_AM3352_I2C_SCANNER/`**](./Examples/TIRTOS_AM3352_I2C_SCANNER/) — I2C1 bus scanner: probes addresses 0x03–0x77 and prints an `i2cdetect -y 1`-style grid over UART0. Uses direct register-access I2C driver with polled probe and soft-recovery.
 
 ---
 
@@ -109,6 +110,7 @@ Quick summary:
 | `TIRTOS_AM3352_GPIO_LED_SEQUENCE` | ✅ Stable | 4-LED ping-pong sweep across D2–D5 via SYS/BIOS Task |
 | `TIRTOS_AM3352_GPIO_INTERRUPT` | ✅ Stable | GPIO interrupt-driven blink speed control via push button |
 | `TIRTOS_AM3352_UART_ECHO` | ✅ Stable | UART echo via SYS/BIOS Task + Board driver |
+| `TIRTOS_AM3352_I2C_SCANNER` | ✅ Stable | I2C1 bus scanner with `i2cdetect`-style output over UART0 |
 
 ---
 
@@ -150,7 +152,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_GPIO_LED/             ← SYS/BIOS GPIO blinky via Task_sleep()
     ├── TIRTOS_AM3352_GPIO_LED_SEQUENCE/    ← SYS/BIOS 4-LED sweep via Task
     ├── TIRTOS_AM3352_GPIO_INTERRUPT/       ← SYS/BIOS GPIO interrupt blink control
-    └── TIRTOS_AM3352_UART_ECHO/            ← SYS/BIOS UART echo via Task
+    ├── TIRTOS_AM3352_UART_ECHO/            ← SYS/BIOS UART echo via Task
+    └── TIRTOS_AM3352_I2C_SCANNER/          ← SYS/BIOS I2C1 bus scanner
 ```
 
 ---
