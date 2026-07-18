@@ -92,6 +92,7 @@ Quick summary:
 ### GPIO
 
 - 🟧 [**`Examples/TIRTOS_AM3352_GPIO_LED/`**](./Examples/TIRTOS_AM3352_GPIO_LED/) — SYS/BIOS blinky: toggle D2 (GPIO1[23]) every 500 ms via `Task_sleep()`.
+- 🟧 [**`Examples/TIRTOS_AM3352_GPIO_LED_SEQUENCE/`**](./Examples/TIRTOS_AM3352_GPIO_LED_SEQUENCE/) — SYS/BIOS 4-LED sweeping sequence: ping-pong pattern across D2–D5 (GPIO1[21]–GPIO1[24]), 500 ms per step via `Task_sleep()`.
 
 ### Communication
 
@@ -104,6 +105,7 @@ Quick summary:
 | Project | Status | Notes |
 |---|---|---|
 | `TIRTOS_AM3352_GPIO_LED` | ✅ Stable | GPIO1[23] blink via SYS/BIOS Task + Board driver |
+| `TIRTOS_AM3352_GPIO_LED_SEQUENCE` | ✅ Stable | 4-LED ping-pong sweep across D2–D5 via SYS/BIOS Task |
 | `TIRTOS_AM3352_UART_ECHO` | ✅ Stable | UART echo via SYS/BIOS Task + Board driver |
 
 ---
@@ -143,8 +145,9 @@ Workspace_12/
 ├── Doc/
 │   └── bg.png                 ← banner image
 └── Examples/                  ← all portable CCS projects live here
-    ├── TIRTOS_AM3352_GPIO_LED/     ← SYS/BIOS GPIO blinky via Task_sleep()
-    └── TIRTOS_AM3352_UART_ECHO/    ← SYS/BIOS UART echo via Task
+    ├── TIRTOS_AM3352_GPIO_LED/             ← SYS/BIOS GPIO blinky via Task_sleep()
+    ├── TIRTOS_AM3352_GPIO_LED_SEQUENCE/    ← SYS/BIOS 4-LED sweep via Task
+    └── TIRTOS_AM3352_UART_ECHO/            ← SYS/BIOS UART echo via Task
 ```
 
 ---
