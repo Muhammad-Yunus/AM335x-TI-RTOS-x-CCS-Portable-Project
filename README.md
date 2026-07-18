@@ -93,7 +93,9 @@ Quick summary:
 
 - 🟧 [**`Examples/TIRTOS_AM3352_GPIO_LED/`**](./Examples/TIRTOS_AM3352_GPIO_LED/) — SYS/BIOS blinky: toggle D2 (GPIO1[23]) every 500 ms via `Task_sleep()`.
 
-<!-- Add new entries above this line as more projects are contributed -->
+### Communication
+
+- 🟧 [**`Examples/TIRTOS_AM3352_UART_ECHO/`**](./Examples/TIRTOS_AM3352_UART_ECHO/) — UART interrupt echo via SYS/BIOS Task: reads characters and echoes back with `echo> ` prefix. Demonstrates `Board_initUART()`, UART_read()/UART_write() in a task context.
 
 ---
 
@@ -102,6 +104,7 @@ Quick summary:
 | Project | Status | Notes |
 |---|---|---|
 | `TIRTOS_AM3352_GPIO_LED` | ✅ Stable | GPIO1[23] blink via SYS/BIOS Task + Board driver |
+| `TIRTOS_AM3352_UART_ECHO` | ✅ Stable | UART echo via SYS/BIOS Task + Board driver |
 
 ---
 
@@ -140,8 +143,8 @@ Workspace_12/
 ├── Doc/
 │   └── bg.png                 ← banner image
 └── Examples/                  ← all portable CCS projects live here
-    └── TIRTOS_AM3352_GPIO_LED/     ← SYS/BIOS GPIO blinky via Task_sleep()
-    <!-- more projects added here over time -->
+    ├── TIRTOS_AM3352_GPIO_LED/     ← SYS/BIOS GPIO blinky via Task_sleep()
+    └── TIRTOS_AM3352_UART_ECHO/    ← SYS/BIOS UART echo via Task
 ```
 
 ---
