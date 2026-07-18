@@ -158,7 +158,12 @@ In CCS:
 
    **Projects:**
 
-   - `TIRTOS_AM3352_GPIO_LED` — SYS/BIOS blinky: toggle D2 (GPIO1[23]) every 500 ms via `Task_sleep()`
+    - `TIRTOS_AM3352_GPIO_LED` — SYS/BIOS blinky: toggle D2 (GPIO1[23]) every 500 ms via `Task_sleep()`
+    - `TIRTOS_AM3352_GPIO_LED_SEQUENCE` — SYS/BIOS 4-LED sweeping sequence: ping-pong pattern across D2–D5 (GPIO1[21]–GPIO1[24])
+    - `TIRTOS_AM3352_GPIO_INTERRUPT` — SYS/BIOS GPIO interrupt demo: LED D2 blink speed controlled by push button on P9_12
+    - `TIRTOS_AM3352_UART_ECHO` — UART echo via SYS/BIOS Task: reads characters and echoes back with `echo> ` prefix
+    - `TIRTOS_AM3352_I2C_SCANNER` — I2C1 bus scanner: probes addresses 0x03–0x77, prints `i2cdetect`-style grid over UART0
+    - `TIRTOS_AM3352_I2C_SSD1306` — SSD1306 128×32 OLED LCD driver over I2C1 @ 100 kHz via PDK I2C
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
