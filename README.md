@@ -99,6 +99,7 @@ Quick summary:
 
 - 🟧 [**`Examples/TIRTOS_AM3352_UART_ECHO/`**](./Examples/TIRTOS_AM3352_UART_ECHO/) — UART interrupt echo via SYS/BIOS Task: reads characters and echoes back with `echo> ` prefix. Demonstrates `Board_initUART()`, UART_read()/UART_write() in a task context.
 - 🟧 [**`Examples/TIRTOS_AM3352_I2C_SCANNER/`**](./Examples/TIRTOS_AM3352_I2C_SCANNER/) — I2C1 bus scanner: probes addresses 0x03–0x77 and prints an `i2cdetect -y 1`-style grid over UART0. Uses direct register-access I2C driver with polled probe and soft-recovery.
+- 🟧 [**`Examples/TIRTOS_AM3352_I2C_SSD1306/`**](./Examples/TIRTOS_AM3352_I2C_SSD1306/) — SSD1306 128×32 OLED LCD driver over I2C1 @ 100 kHz via PDK `I2C_transfer()`. Demo loop: splash screen, shapes, filled shapes, live counter. Includes fonts 7×10, 11×18, 16×26.
 
 ---
 
@@ -111,6 +112,7 @@ Quick summary:
 | `TIRTOS_AM3352_GPIO_INTERRUPT` | ✅ Stable | GPIO interrupt-driven blink speed control via push button |
 | `TIRTOS_AM3352_UART_ECHO` | ✅ Stable | UART echo via SYS/BIOS Task + Board driver |
 | `TIRTOS_AM3352_I2C_SCANNER` | ✅ Stable | I2C1 bus scanner with `i2cdetect`-style output over UART0 |
+| `TIRTOS_AM3352_I2C_SSD1306` | ✅ Stable | SSD1306 128×32 OLED driver over I2C1 via PDK I2C |
 
 ---
 
@@ -153,7 +155,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_GPIO_LED_SEQUENCE/    ← SYS/BIOS 4-LED sweep via Task
     ├── TIRTOS_AM3352_GPIO_INTERRUPT/       ← SYS/BIOS GPIO interrupt blink control
     ├── TIRTOS_AM3352_UART_ECHO/            ← SYS/BIOS UART echo via Task
-    └── TIRTOS_AM3352_I2C_SCANNER/          ← SYS/BIOS I2C1 bus scanner
+    ├── TIRTOS_AM3352_I2C_SCANNER/          ← SYS/BIOS I2C1 bus scanner
+    └── TIRTOS_AM3352_I2C_SSD1306/          ← SYS/BIOS SSD1306 OLED driver
 ```
 
 ---
