@@ -1,0 +1,144 @@
+# ============================================================
+# .gitignore for AM335x TI-RTOS (SYS/BIOS) x CCS Portable Project
+# Target: Code Composer Studio v12+ on the Antminer L3+ (AM3352)
+# SDK: Processor SDK RTOS AM335x 05.03.00.07
+# ============================================================
+
+# ------------------------------------------------------------
+# 1. Eclipse / CCS workspace metadata
+# ------------------------------------------------------------
+.metadata/
+RemoteSystemsTempFiles/
+.cproject_overrides/
+
+.metadata/.lock
+
+# Per-project Eclipse backup folders
+*/.bak-*/
+*/.bak-*/*
+
+.metadata/.plugins/org.eclipse.core.resources/.history/
+
+.metadata/.plugins/com.ti.dvt.*/
+
+.metadata/.plugins/org.eclipse.tm.terminal.view.ui/
+
+.metadata/.plugins/org.eclipse.cdt.ui/dialog_settings.xml
+.metadata/.plugins/org.eclipse.rse.*/dialog_settings.xml
+.metadata/.plugins/org.eclipse.ltk.ui.refactoring/dialog_settings.xml
+.metadata/.plugins/org.eclipse.ui.*/dialog_settings.xml
+.metadata/.plugins/org.eclipse.debug.ui/dialog_settings.xml
+
+# ------------------------------------------------------------
+# 2. CCS build outputs
+# ------------------------------------------------------------
+**/Debug/
+**/Release/
+**/[A-Za-z]*_Build/
+
+*.obj
+*.o
+*.a
+*.out
+*.map
+*.lst
+*.crf
+*.htm
+*.xml.lst
+*.bin
+*.hex
+*.elf
+*.dis
+*.sym
+*.exp
+*.lib
+*.d
+*.pp
+*.oe
+*.makefile
+
+*.mk
+objects.mk
+sources.mk
+subdir_vars.mk
+subdir_rules.mk
+ccsObjs.opt
+makefile
+*.dep
+
+*.xls
+*.xout
+boot_linkInfo.xml
+
+# ------------------------------------------------------------
+# 3. XDCtools / SYS/BIOS generated files
+# ------------------------------------------------------------
+# XDCtools generated configuration package (from .cfg)
+# This is the single biggest generated artifact in a SYS/BIOS
+# project — contains compiled .cfg output, generated C sources,
+# and package metadata. NEVER commit this.
+configPkg/
+
+# XDCtools help cache (empty, regenerated each time CCS opens the project)
+**/.xdchelp
+
+# Generated C source / headers from the SYS/BIOS .cfg file
+# These are produced by XDCtools and should never be tracked.
+**/*_cfg.c
+**/*_cfg.h
+
+# Generated macros.ini (copy of macros.ini_initial)
+**/macros.ini
+
+# XDCtools package repositories built artifacts
+package.mak
+package.mk
+package/lib/
+package/rel/
+
+# ------------------------------------------------------------
+# 4. CCS-generated debug helper files
+# ------------------------------------------------------------
+*.launch.bak
+.ccsproject_cache/
+.csettings/
+
+# ------------------------------------------------------------
+# 5. Per-machine / per-user
+# ------------------------------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+$RECYCLE.BIN/
+
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+*.log
+*.tmp
+*.bak
+!*.launch
+
+# ------------------------------------------------------------
+# 6. Files that MUST stay tracked (negative patterns)
+# ------------------------------------------------------------
+!.project
+!.cproject
+!.ccsproject
+!.ccsproject.bak
+!.launches/
+!.launches/*.launch
+!.settings/
+# Keep the source tree, linker scripts, and RTOS config
+!*.c
+!*.h
+!*.asm
+!*.cmd
+!*.lds
+!*.s
+!*.cfg
+!*.ini_initial
+!*.ccxml
