@@ -93,6 +93,7 @@ Quick summary:
 
 - 🟧 [**`Examples/TIRTOS_AM3352_GPIO_LED/`**](./Examples/TIRTOS_AM3352_GPIO_LED/) — SYS/BIOS blinky: toggle D2 (GPIO1[23]) every 500 ms via `Task_sleep()`.
 - 🟧 [**`Examples/TIRTOS_AM3352_GPIO_LED_SEQUENCE/`**](./Examples/TIRTOS_AM3352_GPIO_LED_SEQUENCE/) — SYS/BIOS 4-LED sweeping sequence: ping-pong pattern across D2–D5 (GPIO1[21]–GPIO1[24]), 500 ms per step via `Task_sleep()`.
+- 🟧 [**`Examples/TIRTOS_AM3352_GPIO_INTERRUPT/`**](./Examples/TIRTOS_AM3352_GPIO_INTERRUPT/) — SYS/BIOS GPIO interrupt demo: LED D2 blinks at 1 s; push button on P9_12 (GPIO1[28]) decrements blink delay by 100 ms per press.
 
 ### Communication
 
@@ -106,6 +107,7 @@ Quick summary:
 |---|---|---|
 | `TIRTOS_AM3352_GPIO_LED` | ✅ Stable | GPIO1[23] blink via SYS/BIOS Task + Board driver |
 | `TIRTOS_AM3352_GPIO_LED_SEQUENCE` | ✅ Stable | 4-LED ping-pong sweep across D2–D5 via SYS/BIOS Task |
+| `TIRTOS_AM3352_GPIO_INTERRUPT` | ✅ Stable | GPIO interrupt-driven blink speed control via push button |
 | `TIRTOS_AM3352_UART_ECHO` | ✅ Stable | UART echo via SYS/BIOS Task + Board driver |
 
 ---
@@ -147,6 +149,7 @@ Workspace_12/
 └── Examples/                  ← all portable CCS projects live here
     ├── TIRTOS_AM3352_GPIO_LED/             ← SYS/BIOS GPIO blinky via Task_sleep()
     ├── TIRTOS_AM3352_GPIO_LED_SEQUENCE/    ← SYS/BIOS 4-LED sweep via Task
+    ├── TIRTOS_AM3352_GPIO_INTERRUPT/       ← SYS/BIOS GPIO interrupt blink control
     └── TIRTOS_AM3352_UART_ECHO/            ← SYS/BIOS UART echo via Task
 ```
 
