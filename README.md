@@ -104,6 +104,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341/) — ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz (TX_ONLY, polling mode) with primitives (pixel, fill, line, circle, rectangle, 5×7 text). 4 demo scenes: color bands, shapes, text, pixel grid. Optimized FillRect with 64 KB chunk buffer.
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/) — ILI9341 2.8" TFT LCD with LVGL v9.2.1: Music Player Demo with album art, track list, and play controls. 2 frame buffers (307 KB), SPI burst mode via direct register access.
 - 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/) — MMCSD FATFS with interactive shell: auto card detect via GPIO interrupt, dynamic mount/unmount, full file ops (ls, cd, mkdir, rm, cat, pwd) over UART0.
+- 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD/) — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern to sectors. DMA ADMA2 enabled.
 
 ---
 
@@ -121,6 +122,7 @@ Quick summary:
 | `TIRTOS_AM3352_SPI_ILI9341` | ✅ Stable | ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz |
 | `TIRTOS_AM3352_SPI_ILI9341_LVGL` | ✅ Stable | ILI9341 + LVGL v9.2.1 Music Player Demo |
 | `TIRTOS_AM3352_MMCSD_SDCARD_FATFS` | ✅ Stable | MMCSD FATFS with interactive shell + auto card detect |
+| `TIRTOS_AM3352_MMCSD_SDCARD` | ✅ Stable | Raw MMCSD read/write with DMA ADMA2 + data verify |
 
 ---
 
@@ -168,7 +170,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_SPI_TX/               ← SYS/BIOS SPI0 TX with HW CS + GPIO toggle
     ├── TIRTOS_AM3352_SPI_ILI9341/          ← SYS/BIOS ILI9341 2.8" TFT LCD driver
     ├── TIRTOS_AM3352_SPI_ILI9341_LVGL/     ← SYS/BIOS ILI9341 + LVGL v9.2.1 Music Demo
-    └── TIRTOS_AM3352_MMCSD_SDCARD_FATFS/   ← SYS/BIOS MMCSD FATFS with interactive shell
+    ├── TIRTOS_AM3352_MMCSD_SDCARD_FATFS/   ← SYS/BIOS MMCSD FATFS with interactive shell
+    └── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
 ```
 
 ---

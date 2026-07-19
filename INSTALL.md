@@ -168,6 +168,7 @@ In CCS:
     - `TIRTOS_AM3352_SPI_ILI9341` — ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz (TX_ONLY, polling) with drawing primitives
     - `TIRTOS_AM3352_SPI_ILI9341_LVGL` — ILI9341 + LVGL v9.2.1 Music Player Demo with 2 frame buffers
     - `TIRTOS_AM3352_MMCSD_SDCARD_FATFS` — MMCSD FATFS with interactive shell: auto card detect, dynamic mount/unmount, full file ops (ls, cd, mkdir, rm, cat, pwd)
+    - `TIRTOS_AM3352_MMCSD_SDCARD` — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern with DMA ADMA2
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
