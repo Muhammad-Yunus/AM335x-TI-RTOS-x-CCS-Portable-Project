@@ -102,6 +102,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_I2C_SSD1306/`**](./Examples/TIRTOS_AM3352_I2C_SSD1306/) — SSD1306 128×32 OLED LCD driver over I2C1 @ 100 kHz via PDK `I2C_transfer()`. Demo loop: splash screen, shapes, filled shapes, live counter. Includes fonts 7×10, 11×18, 16×26.
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX/`**](./Examples/TIRTOS_AM3352_SPI_TX/) — SPI0 TX baseline with hardware CS: toggles DC/RST GPIOs (P8_26, P8_19) and sends bytes via SPI0 @ 100 kHz. Demonstrates MCSPI 4-pin mode, GPIO0 clock enable, and direct pinmux.
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341/) — ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz (TX_ONLY, polling mode) with primitives (pixel, fill, line, circle, rectangle, 5×7 text). 4 demo scenes: color bands, shapes, text, pixel grid. Optimized FillRect with 64 KB chunk buffer.
+- 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/) — ILI9341 2.8" TFT LCD with LVGL v9.2.1: Music Player Demo with album art, track list, and play controls. 2 frame buffers (307 KB), SPI burst mode via direct register access.
 
 ---
 
@@ -116,7 +117,8 @@ Quick summary:
 | `TIRTOS_AM3352_I2C_SCANNER` | ✅ Stable | I2C1 bus scanner with `i2cdetect`-style output over UART0 |
 | `TIRTOS_AM3352_I2C_SSD1306` | ✅ Stable | SSD1306 128×32 OLED driver over I2C1 via PDK I2C |
 | `TIRTOS_AM3352_SPI_TX` | ✅ Stable | SPI0 TX with hardware CS + GPIO DC/RST toggle |
-| `TIRTOS_AM3352_SPI_ILI9341` | ✅ Stable | ILI9341 2.8" TFT LCD driver over SPI0 @ 10 MHz |
+| `TIRTOS_AM3352_SPI_ILI9341` | ✅ Stable | ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz |
+| `TIRTOS_AM3352_SPI_ILI9341_LVGL` | ✅ Stable | ILI9341 + LVGL v9.2.1 Music Player Demo |
 
 ---
 
@@ -162,7 +164,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_I2C_SCANNER/          ← SYS/BIOS I2C1 bus scanner
     ├── TIRTOS_AM3352_I2C_SSD1306/          ← SYS/BIOS SSD1306 OLED driver
     ├── TIRTOS_AM3352_SPI_TX/               ← SYS/BIOS SPI0 TX with HW CS + GPIO toggle
-    └── TIRTOS_AM3352_SPI_ILI9341/          ← SYS/BIOS ILI9341 2.8" TFT LCD driver
+    ├── TIRTOS_AM3352_SPI_ILI9341/          ← SYS/BIOS ILI9341 2.8" TFT LCD driver
+    └── TIRTOS_AM3352_SPI_ILI9341_LVGL/     ← SYS/BIOS ILI9341 + LVGL v9.2.1 Music Demo
 ```
 
 ---
