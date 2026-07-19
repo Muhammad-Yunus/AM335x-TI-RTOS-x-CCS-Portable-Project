@@ -105,6 +105,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/) — ILI9341 2.8" TFT LCD with LVGL v9.2.1: Music Player Demo with album art, track list, and play controls. 2 frame buffers (307 KB), SPI burst mode via direct register access.
 - 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/) — MMCSD FATFS with interactive shell: auto card detect via GPIO interrupt, dynamic mount/unmount, full file ops (ls, cd, mkdir, rm, cat, pwd) over UART0.
 - 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD/) — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern to sectors. DMA ADMA2 enabled.
+- 🟧 [**`Examples/TIRTOS_AM3352_NIMU_BASIC/`**](./Examples/TIRTOS_AM3352_NIMU_BASIC/) — NIMU Ethernet: CPSW interface with NDK TCP/IP stack, static IP assignment, RX/TX statistics task printing counters every 10 seconds.
 
 ---
 
@@ -123,6 +124,7 @@ Quick summary:
 | `TIRTOS_AM3352_SPI_ILI9341_LVGL` | ✅ Stable | ILI9341 + LVGL v9.2.1 Music Player Demo |
 | `TIRTOS_AM3352_MMCSD_SDCARD_FATFS` | ✅ Stable | MMCSD FATFS with interactive shell + auto card detect |
 | `TIRTOS_AM3352_MMCSD_SDCARD` | ✅ Stable | Raw MMCSD read/write with DMA ADMA2 + data verify |
+| `TIRTOS_AM3352_NIMU_BASIC` | ✅ Stable | NIMU Ethernet: CPSW + NDK TCP/IP stack with stats task |
 
 ---
 
@@ -171,7 +173,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_SPI_ILI9341/          ← SYS/BIOS ILI9341 2.8" TFT LCD driver
     ├── TIRTOS_AM3352_SPI_ILI9341_LVGL/     ← SYS/BIOS ILI9341 + LVGL v9.2.1 Music Demo
     ├── TIRTOS_AM3352_MMCSD_SDCARD_FATFS/   ← SYS/BIOS MMCSD FATFS with interactive shell
-    └── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
+    ├── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
+    └── TIRTOS_AM3352_NIMU_BASIC/           ← SYS/BIOS NIMU Ethernet CPSW + NDK
 ```
 
 ---
