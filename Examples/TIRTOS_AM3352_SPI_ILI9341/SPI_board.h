@@ -21,9 +21,9 @@ extern "C" {
  * SPI instance & protocol parameters
  * -----------------------------------------------------------------------*/
 #define SPI_INSTANCE    (0)         /* SPI controller index (SPI0)        */
-#define SPI_BIT_RATE    (20000000)  /* 20 MHz SCK                         */
+#define SPI_BIT_RATE    (24000000)  /* 24 MHz SCK                         */
 #define SPI_DATA_COUNT  (1)         /* bytes per transaction             */
-#define SPI_LCD_CHUNK   (8192)      /* max bytes per LCD SPI transaction */
+#define SPI_LCD_CHUNK   (65535)     /* max bytes per LCD SPI transaction */
 
 /* -----------------------------------------------------------------------
  * Global buffers & handle (defined in SPI_bbbAM335x_board.c)
