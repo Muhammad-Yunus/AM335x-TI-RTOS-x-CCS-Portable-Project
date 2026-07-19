@@ -16,6 +16,7 @@
 #include "ili9341.h"
 #include "fonts.h"
 #include "delay.h"      /* delay() in ILI9341_Reset() and ILI9341_Init() */
+#include "SPI_board.h"  /* SPI_LCD_CHUNK for FillRect buffer */
 
 
 
@@ -240,30 +241,40 @@ void ILI9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color)
 void ILI9341_FillRect(uint16_t x, uint16_t y,
                       uint16_t w, uint16_t h, uint16_t color)
 {
-    /* C89 declarations first. */
-    static uint8_t row[ILI9341_WIDTH * 2];
+    static uint8_t buf[SPI_LCD_CHUNK];
     uint8_t hi, lo;
-    uint16_t i, r;
+    uint32_t total, i, bufPixels;
 
     if (w == 0 || h == 0) return;
     if (x >= ILI9341_WIDTH || y >= ILI9341_HEIGHT) return;
     if (x + w > ILI9341_WIDTH)  w = ILI9341_WIDTH - x;
     if (y + h > ILI9341_HEIGHT) h = ILI9341_HEIGHT - y;
 
-    ILI9341_SetAddressWindow(x, y, x + w - 1, y + h - 1);
+    total = (uint32_t)w * h * 2U;
+    ILI9341_SetAddressWindow(x, y, x + w - 1U, y + h - 1U);
 
     hi = ILI9341_HI(color);
     lo = ILI9341_LO(color);
 
-    for (i = 0; i < w; i++)
+    bufPixels = sizeof(buf) / 2U;
+    if (bufPixels > total / 2U)
+        bufPixels = total / 2U;
+    for (i = 0U; i < bufPixels; i++)
     {
-        row[2 * i]     = hi;
-        row[2 * i + 1] = lo;
+        buf[2U * i]     = hi;
+        buf[2U * i + 1U] = lo;
     }
 
     LcdDcHigh();
-    for (r = 0; r < h; r++)
-        Spi0TxBuffer(row, (uint32_t)w * 2);
+    {
+        uint32_t chunk = bufPixels * 2U;
+        while (total > 0U)
+        {
+            uint32_t send = (total > chunk) ? chunk : total;
+            Spi0TxBuffer(buf, send);
+            total -= send;
+        }
+    }
 }
 
 void ILI9341_FillScreen(uint16_t color)

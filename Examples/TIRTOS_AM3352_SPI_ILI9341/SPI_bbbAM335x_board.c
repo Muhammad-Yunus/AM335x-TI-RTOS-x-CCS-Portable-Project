@@ -97,6 +97,7 @@ void SpiInit(void)
     SPI_init();
     SPI_socGetInitCfg(SPI_INSTANCE, &spiCfg);
     spiCfg.chnCfg[spiCfg.chNum].dataLineCommMode = MCSPI_DATA_LINE_COMM_MODE_1;
+    spiCfg.chnCfg[spiCfg.chNum].trMode = MCSPI_TX_ONLY_MODE;
     spiCfg.enableIntr = false;   /* force polling mode */
     spiCfg.dmaMode = false;      /* force polling mode (not DMA) */
     SPI_socSetInitCfg(SPI_INSTANCE, &spiCfg);
