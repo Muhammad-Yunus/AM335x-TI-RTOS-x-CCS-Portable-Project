@@ -7,7 +7,7 @@ SYS/BIOS (TI-RTOS) project for **AM3352** (BeagleBone Black) — drives a 2.8" T
 | Item | Value |
 |------|-------|
 | SoC | AM3352 / AM3359 (Cortex-A8) |
-| SPI | SPI0 — 10 MHz, mode 0 (POL0/PHA0) |
+| SPI | SPI0 — 24 MHz, mode 0 (POL0/PHA0), TX_ONLY, polling |
 | SCLK | P9_22 |
 | MOSI | P9_18 (SPI0_D1 — 4-pin mode) |
 | CS   | P9_17 (hardware-controlled, SPI0_CS0) |
@@ -15,7 +15,7 @@ SYS/BIOS (TI-RTOS) project for **AM3352** (BeagleBone Black) — drives a 2.8" T
 | RST  | P8_19 (GPIO0_22) |
 | UART | UART0 @ 115200 8N1 (P9_11 TX, P9_13 RX) |
 
-> CS is handled by the MCSPI peripheral in 4-pin mode. Each `SPI_transfer()` call asserts CS at the start and deasserts at the end, which matches the ILI9341 protocol requirements (CS toggling between command and data phases).
+> CS is handled by the MCSPI peripheral in 4-pin mode (hardware-controlled). Each `SPI_transfer()` call asserts CS at the start and deasserts at the end. Data is sent in chunks up to 65535 bytes per transaction using **polling mode** (no SPI interrupts, no DMA) to avoid interrupt-related hangs.
 
 ## Architecture
 
@@ -26,7 +26,7 @@ main()
   |-- SpiPinMuxSetup()        — configure all 5 pads (DC, RST, SCLK, MOSI, CS)
   |-- GPIO_init()             — TI-RTOS GPIO driver init
   |-- Spi0ClockEnable()       — enable SPI0 module clock (CM_PER)
-  |-- SpiInit()               — open SPI0 @ 10 MHz, mode 0, 4-pin HW-CS
+  |-- SpiInit()               — open SPI0 @ 24 MHz, mode 0, 4-pin HW-CS, TX_ONLY, polling
   |-- Task_create(lcd_demo_task)
   |-- BIOS_start()
         |
@@ -35,7 +35,7 @@ main()
 
 - **`Gpio0ClockEnable()`** — direct register write via StarterWare CSL
 - **`SpiPinMuxSetup()`** — merged pinmux for all SPI + GPIO pads
-- **`SpiInit()`** — sets `dataLineCommMode = MCSPI_DATA_LINE_COMM_MODE_1` (4-pin), then `SPI_open` with `SPI_MASTER`, 8-bit, `SPI_POL0_PHA0`, blocking mode
+- **`SpiInit()`** — sets `dataLineCommMode = MCSPI_DATA_LINE_COMM_MODE_1` (4-pin), `trMode = MCSPI_TX_ONLY_MODE`, `enableIntr = false`, `dmaMode = false` (polling mode), then `SPI_open` with `SPI_MASTER`, 8-bit, `SPI_POL0_PHA0`, blocking mode
 - **`lcd_demo_task`** — calls `ILI9341_Init()` for full boot sequence, then cycles through 4 demo scenes
 
 ### Low-Level Hooks
@@ -44,8 +44,8 @@ main()
 
 | Function | Role |
 |----------|------|
-| `Spi0TxByte(b)` | Send 1 byte via PDK `SPI_transfer()` |
-| `Spi0TxBuffer(buf, len)` | Send multiple bytes via `SPI_transfer()` (chunked) |
+| `Spi0TxByte(b)` | Send 1 byte via PDK `SPI_transfer()` (count=1) |
+| `Spi0TxBuffer(buf, len)` | Send multiple bytes in 64 KB chunks via `SPI_transfer()` |
 | `LcdDcLow()` / `LcdDcHigh()` | Toggle DC GPIO (P8_26) |
 | `LcdRstLow()` / `LcdRstHigh()` | Toggle RST GPIO (P8_19) |
 | `delay(ms)` | RTOS-aware delay using `Task_sleep()` |
@@ -64,7 +64,7 @@ Cycled in an infinite loop:
 | File | Description |
 |------|-------------|
 | `main.c` | Entry point, init sequence, `lcd_demo_task`, SPI/GPIO hooks |
-| `SPI_board.h` | SPI constants (`SPI_INSTANCE`, `SPI_BIT_RATE`, `SPI_LCD_CHUNK`) and function declarations |
+| `SPI_board.h` | SPI constants (`SPI_INSTANCE`, `SPI_BIT_RATE`=24 MHz, `SPI_LCD_CHUNK`=65535) and function declarations |
 | `SPI_bbbAM335x_board.c` | `SpiPinMuxSetup()`, `Spi0ClockEnable()`, `SpiInit()` |
 | `GPIO_board.h` | GPIO pin enum (`LCD_DC`, `LCD_RST`), level aliases |
 | `GPIO_bbbAM335x_board.c` | `Gpio0ClockEnable()` implementation, `GPIO_v1_Config` table |
@@ -83,7 +83,7 @@ Cycled in an infinite loop:
 - **SOC_AM335x define**: The SPI SoC headers guard behind `SOC_AM335x` (lowercase x), but the project defines `SOC_AM335X` (uppercase). `SPI_bbbAM335x_board.c` adds `#define SOC_AM335x` before including the SPI driver headers.
 - **SPI0 GPIO pins (SCLK, MOSI, CS)**: Pinmux value `0x20` = mode 0 (peripheral function) + RX enable (bit 5).
 - **LCD GPIO pins (DC, RST)**: Pinmux value `0x07` = mode 7 (GPIO), no RX.
-- **No framebuffer**: Uses row-by-row rendering (single 640-byte row buffer).
+- **No framebuffer**: `FillRect` fills a 64 KB chunk buffer with pixel data and sends in bursts (3 transaksi untuk full-screen vs 240 sebelumnya).
 - **ILI9341 orientation**: Landscape mode (0x28 = MV=0, MX=0, MY=1, BGR=1).
 
 ## Example Output (UART0)
@@ -94,7 +94,7 @@ GPIO init done
 SPI init OK
 
 === ILI9341 LCD DEMO ===
-SPI0 @ 10 MHz, HW CS, DC=P8_26, RST=P8_19
+SPI0 @ 24 MHz, HW CS, DC=P8_26, RST=P8_19
 
 ILI9341 init OK — starting demo cycle
 ```

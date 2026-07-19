@@ -243,7 +243,7 @@ static void Demo_PixelGrid(void)
 Void lcd_demo_task(UArg arg0, UArg arg1)
 {
     UART_printf("\n=== ILI9341 LCD DEMO ===\n");
-    UART_printf("SPI0 @ 12 MHz, HW CS, DC=P8_26, RST=P8_19\n\n");
+    UART_printf("SPI0 @ 24 MHz, HW CS, DC=P8_26, RST=P8_19\n\n");
 
     UART_printf("Calling ILI9341_Init()...\n");
     ILI9341_Init();
