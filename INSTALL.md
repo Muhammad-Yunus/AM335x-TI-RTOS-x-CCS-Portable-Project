@@ -165,6 +165,7 @@ In CCS:
     - `TIRTOS_AM3352_I2C_SCANNER` — I2C1 bus scanner: probes addresses 0x03–0x77, prints `i2cdetect`-style grid over UART0
     - `TIRTOS_AM3352_I2C_SSD1306` — SSD1306 128×32 OLED LCD driver over I2C1 @ 100 kHz via PDK I2C
     - `TIRTOS_AM3352_SPI_TX` — SPI0 TX with hardware CS: toggles DC/RST GPIOs and sends bytes via SPI0 @ 100 kHz
+    - `TIRTOS_AM3352_SPI_ILI9341` — ILI9341 2.8" TFT LCD driver over SPI0 @ 10 MHz with drawing primitives
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
