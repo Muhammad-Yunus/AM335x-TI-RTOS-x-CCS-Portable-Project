@@ -109,12 +109,23 @@ void Spi0TxByte(uint8_t b)
     }
 }
 
-/* Spi0TxBuffer — send len bytes via Spi0TxByte (per-byte) */
+/* Spi0TxBuffer — send len bytes via PDK SPI driver (chunked, polling) */
 void Spi0TxBuffer(const uint8_t *buf, uint32_t len)
 {
-    uint32_t i;
-    for (i = 0; i < len; i++)
-        Spi0TxByte(buf[i]);
+    while (len > 0)
+    {
+        uint32_t chunk = (len > SPI_LCD_CHUNK) ? SPI_LCD_CHUNK : len;
+        SPI_Transaction transaction;
+
+        transaction.count = chunk;
+        transaction.txBuf = (void *)buf;
+        transaction.rxBuf = lcdRxBuf;
+
+        SPI_transfer(gSpiHandle, &transaction);
+
+        buf += chunk;
+        len -= chunk;
+    }
 }
 
 /* GPIO hooks — toggle DC and RST lines */
