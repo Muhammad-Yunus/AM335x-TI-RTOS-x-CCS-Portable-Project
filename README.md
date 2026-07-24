@@ -107,6 +107,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD/) — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern to sectors. DMA ADMA2 enabled.
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_BASIC/`**](./Examples/TIRTOS_AM3352_NIMU_BASIC/) — NIMU Ethernet: CPSW interface with NDK TCP/IP stack, static IP assignment, RX/TX statistics task printing counters every 10 seconds.
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_FTP/`**](./Examples/TIRTOS_AM3352_NIMU_FTP/) — NIMU Ethernet + FTP Server: listens on port 21, supports USER/PASS auth, STOR/RETR/XPWD/PORT commands. Active mode only, max 5 concurrent clients. File I/O is a stub (socket data only).
+- 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_V2/`**](./Examples/TIRTOS_AM3352_SPI_TX_V2/) — SPI0 TX baseline v2 with hardware CS: continuous `0xAF` loop @ 100 kHz. Cleaned project structure with local SOC files and absolute PDK paths.
 
 ---
 
@@ -127,6 +128,7 @@ Quick summary:
 | `TIRTOS_AM3352_MMCSD_SDCARD` | ✅ Stable | Raw MMCSD read/write with DMA ADMA2 + data verify |
 | `TIRTOS_AM3352_NIMU_BASIC` | ✅ Stable | NIMU Ethernet: CPSW + NDK TCP/IP stack with stats task |
 | `TIRTOS_AM3352_NIMU_FTP` | ✅ Stable | NIMU FTP Server: port 21, USER/PASS auth, STOR/RETR, active mode only |
+| `TIRTOS_AM3352_SPI_TX_V2` | ✅ Stable | SPI0 TX continuous `0xAF` loop @ 100 kHz (cleaned structure) |
 
 ---
 
@@ -177,7 +179,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_MMCSD_SDCARD_FATFS/   ← SYS/BIOS MMCSD FATFS with interactive shell
     ├── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
     ├── TIRTOS_AM3352_NIMU_BASIC/           ← SYS/BIOS NIMU Ethernet CPSW + NDK
-    └── TIRTOS_AM3352_NIMU_FTP/             ← SYS/BIOS NIMU FTP Server (port 21, active mode)
+    ├── TIRTOS_AM3352_NIMU_FTP/             ← SYS/BIOS NIMU FTP Server (port 21, active mode)
+    └── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI0 TX continuous 0xAF loop
 ```
 
 ---

@@ -171,6 +171,7 @@ In CCS:
     - `TIRTOS_AM3352_MMCSD_SDCARD` — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern with DMA ADMA2
     - `TIRTOS_AM3352_NIMU_BASIC` — NIMU Ethernet: CPSW + NDK TCP/IP stack with RX/TX statistics task
     - `TIRTOS_AM3352_NIMU_FTP` — NIMU FTP Server: port 21, USER/PASS auth, STOR/RETR, active mode only, max 5 clients
+    - `TIRTOS_AM3352_SPI_TX_V2` — SPI0 TX continuous `0xAF` loop @ 100 kHz (cleaned project structure)
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
