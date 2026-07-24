@@ -108,6 +108,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_BASIC/`**](./Examples/TIRTOS_AM3352_NIMU_BASIC/) — NIMU Ethernet: CPSW interface with NDK TCP/IP stack, static IP assignment, RX/TX statistics task printing counters every 10 seconds.
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_FTP/`**](./Examples/TIRTOS_AM3352_NIMU_FTP/) — NIMU Ethernet + FTP Server: listens on port 21, supports USER/PASS auth, STOR/RETR/XPWD/PORT commands. Active mode only, max 5 concurrent clients. File I/O is a stub (socket data only).
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_V2/`**](./Examples/TIRTOS_AM3352_SPI_TX_V2/) — SPI1 TX baseline v2 with hardware CS: continuous `0xAF` loop @ 100 kHz. Cleaned project structure with local SOC files and absolute PDK paths.
+- 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_DMA/`**](./Examples/TIRTOS_AM3352_SPI_TX_DMA/) — SPI1 TX with EDMA3 DMA: continuous `0xAF` loopback test (MOSI→MISO jumper), callback-based non-blocking transfer with cache management (WB/Inv).
 
 ---
 
@@ -129,6 +130,7 @@ Quick summary:
 | `TIRTOS_AM3352_NIMU_BASIC` | ✅ Stable | NIMU Ethernet: CPSW + NDK TCP/IP stack with stats task |
 | `TIRTOS_AM3352_NIMU_FTP` | ✅ Stable | NIMU FTP Server: port 21, USER/PASS auth, STOR/RETR, active mode only |
 | `TIRTOS_AM3352_SPI_TX_V2` | ✅ Stable | SPI1 TX continuous `0xAF` loop @ 100 kHz (cleaned structure) |
+| `TIRTOS_AM3352_SPI_TX_DMA` | ✅ Stable | SPI1 TX with EDMA3 DMA + cache management, loopback test |
 
 ---
 
@@ -180,7 +182,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
     ├── TIRTOS_AM3352_NIMU_BASIC/           ← SYS/BIOS NIMU Ethernet CPSW + NDK
     ├── TIRTOS_AM3352_NIMU_FTP/             ← SYS/BIOS NIMU FTP Server (port 21, active mode)
-    └── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI1 TX continuous 0xAF loop
+    ├── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI1 TX continuous 0xAF loop
+    └── TIRTOS_AM3352_SPI_TX_DMA/           ← SYS/BIOS SPI1 TX with EDMA3 DMA
 ```
 
 ---
