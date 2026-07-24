@@ -104,10 +104,10 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341/) — ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz (TX_ONLY, polling mode) with primitives (pixel, fill, line, circle, rectangle, 5×7 text). 4 demo scenes: color bands, shapes, text, pixel grid. Optimized FillRect with 64 KB chunk buffer.
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL/) — ILI9341 2.8" TFT LCD with LVGL v9.2.1: Music Player Demo with album art, track list, and play controls. 2 frame buffers (307 KB), SPI burst mode via direct register access.
 - 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD_FATFS/) — MMCSD FATFS with interactive shell: auto card detect via GPIO interrupt, dynamic mount/unmount, full file ops (ls, cd, mkdir, rm, cat, pwd) over UART0.
-- 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD/) — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern to sectors. DMA ADMA2 enabled.
+- 🟧 [**`Examples/TIRTOS_AM3352_MMCSD_SDCARD/`**](./Examples/TIRTOS_AM3352_MMCSD_SDCARD/) — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern to sectors.
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_BASIC/`**](./Examples/TIRTOS_AM3352_NIMU_BASIC/) — NIMU Ethernet: CPSW interface with NDK TCP/IP stack, static IP assignment, RX/TX statistics task printing counters every 10 seconds.
 - 🟧 [**`Examples/TIRTOS_AM3352_NIMU_FTP/`**](./Examples/TIRTOS_AM3352_NIMU_FTP/) — NIMU Ethernet + FTP Server: listens on port 21, supports USER/PASS auth, STOR/RETR/XPWD/PORT commands. Active mode only, max 5 concurrent clients. File I/O is a stub (socket data only).
-- 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_V2/`**](./Examples/TIRTOS_AM3352_SPI_TX_V2/) — SPI0 TX baseline v2 with hardware CS: continuous `0xAF` loop @ 100 kHz. Cleaned project structure with local SOC files and absolute PDK paths.
+- 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_V2/`**](./Examples/TIRTOS_AM3352_SPI_TX_V2/) — SPI1 TX baseline v2 with hardware CS: continuous `0xAF` loop @ 100 kHz. Cleaned project structure with local SOC files and absolute PDK paths.
 
 ---
 
@@ -125,10 +125,10 @@ Quick summary:
 | `TIRTOS_AM3352_SPI_ILI9341` | ✅ Stable | ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz |
 | `TIRTOS_AM3352_SPI_ILI9341_LVGL` | ✅ Stable | ILI9341 + LVGL v9.2.1 Music Player Demo |
 | `TIRTOS_AM3352_MMCSD_SDCARD_FATFS` | ✅ Stable | MMCSD FATFS with interactive shell + auto card detect |
-| `TIRTOS_AM3352_MMCSD_SDCARD` | ✅ Stable | Raw MMCSD read/write with DMA ADMA2 + data verify |
+| `TIRTOS_AM3352_MMCSD_SDCARD` | ✅ Stable | Raw MMCSD read/write with data verify |
 | `TIRTOS_AM3352_NIMU_BASIC` | ✅ Stable | NIMU Ethernet: CPSW + NDK TCP/IP stack with stats task |
 | `TIRTOS_AM3352_NIMU_FTP` | ✅ Stable | NIMU FTP Server: port 21, USER/PASS auth, STOR/RETR, active mode only |
-| `TIRTOS_AM3352_SPI_TX_V2` | ✅ Stable | SPI0 TX continuous `0xAF` loop @ 100 kHz (cleaned structure) |
+| `TIRTOS_AM3352_SPI_TX_V2` | ✅ Stable | SPI1 TX continuous `0xAF` loop @ 100 kHz (cleaned structure) |
 
 ---
 

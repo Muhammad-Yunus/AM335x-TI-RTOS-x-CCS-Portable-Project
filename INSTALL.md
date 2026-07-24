@@ -168,10 +168,10 @@ In CCS:
     - `TIRTOS_AM3352_SPI_ILI9341` — ILI9341 2.8" TFT LCD driver over SPI0 @ 24 MHz (TX_ONLY, polling) with drawing primitives
     - `TIRTOS_AM3352_SPI_ILI9341_LVGL` — ILI9341 + LVGL v9.2.1 Music Player Demo with 2 frame buffers
     - `TIRTOS_AM3352_MMCSD_SDCARD_FATFS` — MMCSD FATFS with interactive shell: auto card detect, dynamic mount/unmount, full file ops (ls, cd, mkdir, rm, cat, pwd)
-    - `TIRTOS_AM3352_MMCSD_SDCARD` — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern with DMA ADMA2
+    - `TIRTOS_AM3352_MMCSD_SDCARD` — Raw MMCSD read/write: open SDMMC, read card params, write/verify/update/verify pattern
     - `TIRTOS_AM3352_NIMU_BASIC` — NIMU Ethernet: CPSW + NDK TCP/IP stack with RX/TX statistics task
     - `TIRTOS_AM3352_NIMU_FTP` — NIMU FTP Server: port 21, USER/PASS auth, STOR/RETR, active mode only, max 5 clients
-    - `TIRTOS_AM3352_SPI_TX_V2` — SPI0 TX continuous `0xAF` loop @ 100 kHz (cleaned project structure)
+    - `TIRTOS_AM3352_SPI_TX_V2` — SPI1 TX continuous `0xAF` loop @ 100 kHz (cleaned project structure)
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
