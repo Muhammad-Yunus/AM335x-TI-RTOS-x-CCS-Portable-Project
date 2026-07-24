@@ -180,7 +180,7 @@ Workspace_12/
     ├── TIRTOS_AM3352_MMCSD_SDCARD/         ← SYS/BIOS raw MMCSD read/write with DMA
     ├── TIRTOS_AM3352_NIMU_BASIC/           ← SYS/BIOS NIMU Ethernet CPSW + NDK
     ├── TIRTOS_AM3352_NIMU_FTP/             ← SYS/BIOS NIMU FTP Server (port 21, active mode)
-    └── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI0 TX continuous 0xAF loop
+    └── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI1 TX continuous 0xAF loop
 ```
 
 ---
