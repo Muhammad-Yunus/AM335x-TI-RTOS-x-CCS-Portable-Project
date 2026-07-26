@@ -8,7 +8,7 @@
 
 #include "ili9341.h"
 #include "fonts.h"
-#include "delay.h"
+#include "utils.h"
 
 #define SPI_LCD_CHUNK   (65535)
 
@@ -21,25 +21,8 @@ extern void LcdRstHigh(void);
 
 static void ILI9341_WriteCommand(uint8_t cmd)
 {
-    uint8_t txBuf[2];
-    txBuf[0] = cmd;
     LcdDcLow();
-    Spi1TxBuffer(txBuf, 1);
-}
-
-static void ILI9341_WriteCmdData(uint8_t cmd, const uint8_t *data, uint32_t len)
-{
-    static uint8_t txBuf[32];
-    uint32_t i;
-
-    txBuf[0] = cmd;
-    if (len > 31) len = 31;
-    for (i = 0; i < len; i++) {
-        txBuf[i + 1] = data[i];
-    }
-
-    LcdDcLow();
-    Spi1TxBuffer(txBuf, len + 1);
+    Spi1TxByte(cmd);
 }
 
 static void ILI9341_WriteData(uint8_t data)
@@ -70,26 +53,32 @@ void ILI9341_Init(void)
 
     ILI9341_WriteCommand(ILI9341_CMD_DISPLAYOFF);
 
-    {
-        static const uint8_t d[] = { 0x39, 0x2C, 0x00, 0x34, 0x02 };
-        ILI9341_WriteCmdData(ILI9341_CMD_PWRA, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x00, 0x83, 0x30 };
-        ILI9341_WriteCmdData(ILI9341_CMD_PWRB, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x85, 0x01, 0x79 };
-        ILI9341_WriteCmdData(ILI9341_CMD_DTCA, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x00, 0x00 };
-        ILI9341_WriteCmdData(ILI9341_CMD_DTCB, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x64, 0x03, 0x12, 0x81 };
-        ILI9341_WriteCmdData(ILI9341_CMD_PWRSEQ, d, sizeof(d));
-    }
+    ILI9341_WriteCommand(ILI9341_CMD_PWRA);
+    ILI9341_WriteData(0x39);
+    ILI9341_WriteData(0x2C);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x34);
+    ILI9341_WriteData(0x02);
+
+    ILI9341_WriteCommand(ILI9341_CMD_PWRB);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x83);
+    ILI9341_WriteData(0x30);
+
+    ILI9341_WriteCommand(ILI9341_CMD_DTCA);
+    ILI9341_WriteData(0x85);
+    ILI9341_WriteData(0x01);
+    ILI9341_WriteData(0x79);
+
+    ILI9341_WriteCommand(ILI9341_CMD_DTCB);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x00);
+
+    ILI9341_WriteCommand(ILI9341_CMD_PWRSEQ);
+    ILI9341_WriteData(0x64);
+    ILI9341_WriteData(0x03);
+    ILI9341_WriteData(0x12);
+    ILI9341_WriteData(0x81);
 
     ILI9341_WriteCommand(ILI9341_CMD_PRC);
     ILI9341_WriteData(0x20);
@@ -100,10 +89,9 @@ void ILI9341_Init(void)
     ILI9341_WriteCommand(ILI9341_CMD_PWR2);
     ILI9341_WriteData(0x11);
 
-    {
-        static const uint8_t d[] = { 0x35, 0x3E };
-        ILI9341_WriteCmdData(ILI9341_CMD_VCOM1, d, sizeof(d));
-    }
+    ILI9341_WriteCommand(ILI9341_CMD_VCOM1);
+    ILI9341_WriteData(0x35);
+    ILI9341_WriteData(0x3E);
 
     ILI9341_WriteCommand(ILI9341_CMD_VCOM2);
     ILI9341_WriteData(0xBE);
@@ -114,26 +102,30 @@ void ILI9341_Init(void)
     ILI9341_WriteCommand(ILI9341_CMD_PIXELFORMAT);
     ILI9341_WriteData(0x55);
 
-    {
-        static const uint8_t d[] = { 0x00, 0x1F };
-        ILI9341_WriteCmdData(ILI9341_CMD_FRC, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x0A, 0x82, 0x27, 0x00 };
-        ILI9341_WriteCmdData(ILI9341_CMD_DFC, d, sizeof(d));
-    }
+    ILI9341_WriteCommand(ILI9341_CMD_FRC);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x1F);
+
+    ILI9341_WriteCommand(ILI9341_CMD_DFC);
+    ILI9341_WriteData(0x0A);
+    ILI9341_WriteData(0x82);
+    ILI9341_WriteData(0x27);
+    ILI9341_WriteData(0x00);
 
     ILI9341_WriteCommand(ILI9341_CMD_3GAMMAEN);
     ILI9341_WriteData(0x00);
 
-    {
-        static const uint8_t d[] = { 0x00, 0x00, 0x00, 0xEF };
-        ILI9341_WriteCmdData(ILI9341_CMD_COLADDR, d, sizeof(d));
-    }
-    {
-        static const uint8_t d[] = { 0x00, 0x00, 0x01, 0x3F };
-        ILI9341_WriteCmdData(ILI9341_CMD_PAGEADDR, d, sizeof(d));
-    }
+    ILI9341_WriteCommand(ILI9341_CMD_COLADDR);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0xEF);
+
+    ILI9341_WriteCommand(ILI9341_CMD_PAGEADDR);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x00);
+    ILI9341_WriteData(0x01);
+    ILI9341_WriteData(0x3F);
 
     ILI9341_WriteCommand(ILI9341_CMD_GAMMA);
     ILI9341_WriteData(0x01);
@@ -181,7 +173,7 @@ void ILI9341_SetAddressWindow(uint16_t x0, uint16_t y0,
 
 void ILI9341_WritePixels(const uint16_t *pixels, uint32_t count)
 {
-    static uint8_t scratch[2 * 4096];
+    static uint8_t scratch[2 * 64];
 
     const uint8_t *src = (const uint8_t *)pixels;
     uint32_t total = count * 2;
@@ -224,7 +216,7 @@ void ILI9341_FillRect(uint16_t x, uint16_t y,
 {
     static uint8_t buf[SPI_LCD_CHUNK];
     uint8_t hi, lo;
-    uint32_t total, i, bufBytes;
+    uint32_t total, i, bufPixels;
 
     if (w == 0 || h == 0) return;
     if (x >= ILI9341_WIDTH || y >= ILI9341_HEIGHT) return;
@@ -237,19 +229,24 @@ void ILI9341_FillRect(uint16_t x, uint16_t y,
     hi = ILI9341_HI(color);
     lo = ILI9341_LO(color);
 
-    bufBytes = sizeof(buf);
-    for (i = 0U; i < bufBytes; i += 2U)
+    bufPixels = sizeof(buf) / 2U;
+    if (bufPixels > total / 2U)
+        bufPixels = total / 2U;
+    for (i = 0U; i < bufPixels; i++)
     {
-        buf[i]     = hi;
-        buf[i + 1] = lo;
+        buf[2U * i]     = hi;
+        buf[2U * i + 1U] = lo;
     }
 
     LcdDcHigh();
-    while (total > 0U)
     {
-        uint32_t send = (total > bufBytes) ? bufBytes : total;
-        Spi1TxBuffer(buf, send);
-        total -= send;
+        uint32_t chunk = bufPixels * 2U;
+        while (total > 0U)
+        {
+            uint32_t send = (total > chunk) ? chunk : total;
+            Spi1TxBuffer(buf, send);
+            total -= send;
+        }
     }
 }
 
@@ -342,7 +339,7 @@ void ILI9341_FillCircle(int16_t cx, int16_t cy,
 void ILI9341_DrawChar(uint16_t x, uint16_t y,
                       char c, uint16_t fg, uint16_t bg)
 {
-    static uint8_t buf[FONT5X7_WIDTH * FONT5X7_HEIGHT * 2];
+    static uint8_t colbuf[FONT5X7_HEIGHT * 2];
     const uint8_t *glyph;
     uint8_t fg_hi, fg_lo, bg_hi, bg_lo;
     uint8_t col, row, bits;
@@ -356,29 +353,29 @@ void ILI9341_DrawChar(uint16_t x, uint16_t y,
     bg_hi = ILI9341_HI(bg);
     bg_lo = ILI9341_LO(bg);
 
-    for (row = 0; row < FONT5X7_HEIGHT; row++)
+    for (col = 0; col < FONT5X7_WIDTH; col++)
     {
-        for (col = 0; col < FONT5X7_WIDTH; col++)
+        bits = glyph[col];
+        for (row = 0; row < FONT5X7_HEIGHT; row++)
         {
-            bits = glyph[col];
             if (bits & (uint8_t)(1U << row))
             {
-                buf[(row * FONT5X7_WIDTH + col) * 2]     = fg_hi;
-                buf[(row * FONT5X7_WIDTH + col) * 2 + 1] = fg_lo;
+                colbuf[2 * row]     = fg_hi;
+                colbuf[2 * row + 1] = fg_lo;
             }
             else
             {
-                buf[(row * FONT5X7_WIDTH + col) * 2]     = bg_hi;
-                buf[(row * FONT5X7_WIDTH + col) * 2 + 1] = bg_lo;
+                colbuf[2 * row]     = bg_hi;
+                colbuf[2 * row + 1] = bg_lo;
             }
         }
-    }
 
-    ILI9341_SetAddressWindow(x, y,
-                             (uint16_t)(x + FONT5X7_WIDTH - 1),
-                             (uint16_t)(y + FONT5X7_HEIGHT - 1));
-    LcdDcHigh();
-    Spi1TxBuffer(buf, FONT5X7_WIDTH * FONT5X7_HEIGHT * 2);
+        ILI9341_SetAddressWindow((uint16_t)(x + col), y,
+                                 (uint16_t)(x + col),
+                                 (uint16_t)(y + FONT5X7_HEIGHT - 1));
+        LcdDcHigh();
+        Spi1TxBuffer(colbuf, (uint32_t)FONT5X7_HEIGHT * 2);
+    }
 
     ILI9341_FillRect((uint16_t)(x + FONT5X7_WIDTH), y,
                      1, FONT5X7_HEIGHT, bg);

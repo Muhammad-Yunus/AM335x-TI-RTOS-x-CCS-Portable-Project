@@ -107,7 +107,7 @@ void registerEdma3Interrupts (uint32_t edma3Id)
     //hwiParams.enableInt = TRUE;
     
     hwiCCXferCompInt = Hwi_create( ccXferCompInt[edma3Id][dsp_num],
-                			(ti_sysbios_hal_Hwi_FuncPtr)&lisrEdma3ComplHandler0,
+                			(&lisrEdma3ComplHandler0),
                 			(const Hwi_Params *) (&hwiParams),
                 			&eb);
     if (TRUE == Error_check(&eb))
@@ -123,9 +123,9 @@ void registerEdma3Interrupts (uint32_t edma3Id)
     /* set the priority ID     */
     hwiParams.priority = hwIntCcErr;
     //hwiParams.enableInt = TRUE;
-
+	
     hwiCCErrInt = Hwi_create( ccErrorInt[edma3Id],
-                (ti_sysbios_hal_Hwi_FuncPtr)&lisrEdma3CCErrHandler0,
+                (&lisrEdma3CCErrHandler0),
                 (const Hwi_Params *) (&hwiParams),
                 &eb);
 
@@ -135,17 +135,17 @@ void registerEdma3Interrupts (uint32_t edma3Id)
     }
 
     while (numTc < numEdma3Tc[edma3Id])
-        {
+	    {
         /* Initialize the HWI parameters with user specified values */
         Hwi_Params_init(&hwiParams);
         /* argument for the ISR */
         hwiParams.arg = edma3Id;
-        /* set the priority ID     */
+    	/* set the priority ID     */
         hwiParams.priority = hwIntTcErr;
-        //hwiParams.enableInt = TRUE;
+		//hwiParams.enableInt = TRUE;
         
         hwiTCErrInt[numTc] = Hwi_create( tcErrorInt[edma3Id][numTc],
-                    (ti_sysbios_hal_Hwi_FuncPtr)ptrEdma3TcIsrHandler[numTc],
+                    (ptrEdma3TcIsrHandler[numTc]),
                     (const Hwi_Params *) (&hwiParams),
                     &eb);
         if (TRUE == Error_check(&eb))
@@ -153,7 +153,7 @@ void registerEdma3Interrupts (uint32_t edma3Id)
             System_printf("HWI Create Failed\n",Error_getCode(&eb));
         }
         numTc++;
-        }
+    	}
    /**
     * Enabling the HWI_ID.
     * EDMA3 interrupts (transfer completion, CC error etc.)
@@ -169,11 +169,11 @@ void registerEdma3Interrupts (uint32_t edma3Id)
     Hwi_enableInterrupt(ccXferCompInt[edma3Id][dsp_num]);
     numTc = 0;
     while (numTc < numEdma3Tc[edma3Id])
-        {
+	    {
         Hwi_enableInterrupt(tcErrorInt[edma3Id][numTc]);
         numTc++;
-        }
-
+    	}
+		
     /* Restore interrupts */
     Hwi_restore(cookie);
     }
@@ -181,7 +181,7 @@ void registerEdma3Interrupts (uint32_t edma3Id)
 /**  To Unregister the ISRs with the underlying OS, if previously registered. */
 void unregisterEdma3Interrupts (uint32_t edma3Id)
     {
-    static UInt32 cookie = 0;
+	static UInt32 cookie = 0;
     uint32_t numTc = 0;
 
     /* Disabling the global interrupts */
@@ -190,10 +190,10 @@ void unregisterEdma3Interrupts (uint32_t edma3Id)
     Hwi_delete(&hwiCCXferCompInt);
     Hwi_delete(&hwiCCErrInt);
     while (numTc < numEdma3Tc[edma3Id])
-        {
+	    {
         Hwi_delete(&hwiTCErrInt[numTc]);
         numTc++;
-        }
+    	}
     /* Restore interrupts */
     Hwi_restore(cookie);
     }

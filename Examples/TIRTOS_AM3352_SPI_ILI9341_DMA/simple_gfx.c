@@ -4,23 +4,16 @@
  */
 
 #include "simple_gfx.h"
-#include "ili9341/ili9341.h"
+#include "ili9341.h"
 #include "utils.h"
 
-/* ============================================================================
- * Constants
- * ============================================================================ */
+#define COLOR_BAND_COUNT (8)
 
 static const uint16_t COLOR_BAND[] = {
     ILI9341_COLOR_RED,    ILI9341_COLOR_ORANGE, ILI9341_COLOR_YELLOW,
     ILI9341_COLOR_GREEN,  ILI9341_COLOR_CYAN,   ILI9341_COLOR_BLUE,
     ILI9341_COLOR_MAGENTA,ILI9341_COLOR_WHITE
 };
-#define COLOR_BAND_COUNT (sizeof(COLOR_BAND) / sizeof(COLOR_BAND[0]))
-
-/* ============================================================================
- * Static Helpers
- * ============================================================================ */
 
 static void Demo_ClearAndHeader(const char *title, uint16_t bg)
 {
@@ -29,10 +22,6 @@ static void Demo_ClearAndHeader(const char *title, uint16_t bg)
     ILI9341_DrawString(10, 30, "AM3352 SPI1 + ILI9341",
                        ILI9341_COLOR_YELLOW, bg);
 }
-
-/* ============================================================================
- * Function Definitions
- * ============================================================================ */
 
 void simple_gfx_demo_color_bands(void)
 {

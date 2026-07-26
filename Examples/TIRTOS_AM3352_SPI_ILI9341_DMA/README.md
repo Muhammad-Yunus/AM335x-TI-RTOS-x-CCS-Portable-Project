@@ -1,188 +1,132 @@
-# TIRTOS AM3352 SPI1 + ILI9341 LCD Demo (EDMA3)
+# TIRTOS AM3352 SPI1 ILI9341 LCD Demo with DMA
 
-Embedded firmware untuk **Texas Instruments AM3352** (BeagleBone/AM335x) yang mengintegrasikan:
+TI-RTOS (SYSBIOS) project for **AM3352** — **ILI9341 2.8" TFT LCD** demo via **SPI1** with **EDMA3 DMA** transfer.
 
-- **SPI1** dengan **DMA (EDMA3)** untuk transfer data berkecepatan tinggi
-- **ILI9341** 2.8" TFT LCD (320x240) via SPI
-- **TI-RTOS (BIOS 6.x)** sebagai real-time operating system
-- **GPIO** untuk kontrol DC (Data/Command) dan RST (Reset) LCD
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      main() - BIOS Start                    │
+│   1. Create LCD Demo Task (priority 1, stack 0x2000)        │
+│   2. Initialize Board (pinmux, clock, UART)                 │
+│   3. Start BIOS (runs lcd_demo_task)                        │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              lcd_demo_task() — Main Application             │
+│   1. Pinmux override for SPI1 + GPIO0 clock enable          │
+│   2. Init SPI + EDMA3                                       │
+│   3. Create semaphores (cbSem for callback, lcdSem for LCD) │
+│   4. Open SPI1 at 24 MHz, callback mode                     │
+│   5. LCD Reset sequence (DC/RST GPIO toggle)                │
+│   6. ILI9341_Init() — send init commands                    │
+│   7. Loop: run graphics demos forever                       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              SPI_callback() — DMA Completion ISR            │
+│   Called by SPI driver when EDMA3 finishes a transfer.      │
+│   Posts cbSem and/or lcdSem to unblock waiting caller       │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│         Spi1TxByte() / Spi1TxBuffer() — SPI Helpers         │
+│   Blocking SPI transfer wrappers using DMA + semaphore wait │
+│   Handles cache maintenance (wb/Inv) for DMA coherence      │
+└─────────────────────────────────────────────────────────────┘
+                              │
+                              ▼
+┌─────────────────────────────────────────────────────────────┐
+│              simple_gfx.* — Graphics Demos                  │
+│   - Color bands (8 colored stripes)                         │
+│   - Shapes (rect, circle, line)                             │
+│   - Text (uppercase, lowercase, digits)                     │
+│   - Pixel grid (checkerboard pattern)                       │
+└─────────────────────────────────────────────────────────────┘
+```
+
+### File Organization
+
+| File | Description |
+|------|-------------|
+| `main.c` | SPI init, DMA callbacks, task entry points |
+| `ili9341.c/.h` | LCD driver (commands, pixel drawing primitives) |
+| `simple_gfx.c/.h` | Higher-level demo scenes (shapes, text, patterns) |
+| `utils.c/.h` | Low-level helpers (delay, DC/RST GPIO control) |
+| `SPI_log.c` | UART logging helper |
+| `spi_arm_dma_bbbAM335x_slavemode.cfg` | SYSBIOS configuration |
+| `TIRTOS_AM3352_SPI_ILI9341_DMA.cmd` | Linker script |
 
 ## Hardware
 
-| Item | Detail |
-|------|--------|
-| **MCU** | TI AM3352 (ARM Cortex-A8) |
-| **Board** | Antminer L3+ (AM3352 based) |
-| **LCD** | ILI9341 2.8" TFT 320x240 |
-| **SPI** | SPI1 — SCK=P9_31, MOSI=P9_30, CS=P9_28 |
-| **GPIO DC** | P8_26 = GPIO1[29] |
-| **GPIO RST** | P8_19 = GPIO0[22] |
-| **Clock** | 24 MHz SPI @ DMA mode |
+- **MCU**: AM3352 (Cortex-A8) — Antminer L3+ board
+- **Display**: ILI9341 2.8" TFT LCD (240x320 pixels)
+- **Interface**: SPI1 @ 24 MHz, DMA mode (EDMA3)
 
-## Software Stack
+### Pin Mapping
 
-| Komponen | Versi / Paket |
-|----------|--------------|
-| **OS** | TI-RTOS (BIOS 6.76) |
-| **SDK** | Processor SDK RTOS AM335x 6.03 |
-| **SPI Driver** | ti.drv.spi (PDK) |
-| **EDMA3 Driver** | ti.sdo.edma3.drv + ti.sdo.edma3.rm (LLD 2.12) |
-| **GPIO Driver** | ti.drv.gpio |
-| **Compiler** | TI ARM CGT (armcc/clang) |
+| Function | Pin | Location | Signal |
+|----------|-----|----------|--------|
+| SCK | P9-31 | A13 | SPI1_SCLK |
+| MOSI | P9-30 | D12 | SPI1_D0 |
+| CS | P9-28 | C12 | SPI1_CS0 |
+| DC (Data/Command) | P8-26 | GPIO1[29] | GPIO output |
+| RST (Reset) | P8-19 | GPIO0[22] | GPIO output |
 
-## Struktur Project
+## Graphics Demos
 
-```
-TIRTOS_AM3352_SPI_ILI9341_DMA/
-├── main.c                  # Entry point — creates LCD demo task
-├── tirtos_am3352_spi_ili9341_dma.cfg  # BIOS/XDC configuration
-├── GPIO_board.h            # GPIO pin definitions for LCD
-├── SPI_log.h               # UART printf wrapper for debug output
-│
-├── src/
-│   └── makefile.libs       # EDMA3/SPI library build rules
-│
-├── ili9341/                # ILI9341 LCD driver
-│   ├── ili9341.c           # Core driver (init, fill, draw primitives)
-│   ├── ili9341.h           # Public API + color constants
-│   ├── fonts.h             # 5x7 pixel font bitmap
-│   └── delay.h             # Delay function header
-│
-├── simple_gfx.c            # Graphics demo functions
-├── simple_gfx.h            # Demo function declarations
-│
-├── utils.c                 # SPI DMA helpers + GPIO control
-├── utils.h                 # Utility function headers
-│
-└── sample_*.c              # EDMA3 platform-specific drivers
-    ├── sample_arm_init.c           # EDMA3 init/deinit
-    ├── sample_arm_cs.c             # Cache + semaphore ops
-    ├── sample_am335x_cfg.c         # AM335x EDMA3 hardware config
-    └── sample_am335x_arm_int_reg.c # Interrupt registration
-```
+The LCD cycles through these demo scenes continuously:
 
-## Fitur Utama
+1. **Color Bands** — 8 horizontal color stripes (Red, Orange, Yellow, Green, Cyan, Blue, Magenta, White)
+2. **Shapes** — Rectangle, filled rectangle, outline circle, filled circle, diagonal lines
+3. **Text** — Uppercase, lowercase, and digit strings in various colors
+4. **Pixel Grid** — Checkerboard pattern on left half, solid green on right half
 
-### SPI + EDMA3 DMA
-- Transfer SPI menggunakan **EDMA3** untuk efisiensi CPU
-- Callback-based transfer dengan semaphore synchronization
-- Cache maintainance (Clean/Invalidate) untuk DMA-coherent memory
-- 6-line SPI mode (SCK, MOSI, MISO, CS0, CS1, CS2)
+## Toolchain
 
-### ILI9341 LCD Driver
-- Full initialization sequence (power, gamma, display commands)
-- Batched command+data transfers untuk mengurangi overhead SPI
-- Row-major character rendering
-- Primitives: `FillScreen`, `FillRect`, `DrawPixel`, `DrawLine`, `DrawRect`, `DrawCircle`, `FillCircle`, `DrawChar`, `DrawString`
-- 16-bit RGB5:6:5 color format
+- **Processor SDK RTOS AM335x** — [v1.0.17](https://www.ti.com/tool/download/PROCESSOR-SDK-RTOS-AM335X)
+- **Code Composer Studio** — v12.8.1
+- **Compiler** — GCC ARM 7.3.1 (`gcc-arm-none-eabi-7-2018-q2-update`)
+- **XDCtools** — v3.55.2.22_core
+- **SYSBIOS** — v6.76.3.01
+- **EDMA3 LLD** — v2.12.05.30E
 
-### Simple GFX Demos
-1. **Color Bands** — 8 horizontal color bars (Red, Orange, Yellow, Green, Cyan, Blue, Magenta, White)
-2. **Shapes** — Rectangles, circles, and diagonal lines
-3. **Text** — Alphanumeric strings with multiple colors/sizes
-4. **Pixel Grid** — Checkerboard pattern on left half, solid fill on right
+## Build & Run
 
-### Task Architecture
-```
-main()
- └── lcd_demo_task (priority 1, stack 0x2000)
-      ├── SPI1 init + EDMA3 setup
-      ├── GPIO init (DC, RST pins)
-      ├── LCD reset + ILI9341_Init()
-      └── while(1) → ColorBands → Shapes → Text → PixelGrid
-```
+1. Build via CCS — Configuration **Debug**
+2. Debug using **JLink** with target configuration:
+   - Device: `AM3352` / `AM3359` (Cortex-A8)
+   - CCXML: use target configuration with JLink
+   - GEL file: `C:\ti\ccs1281\ccs\ccs_base\emulation\boards\beaglebone\gel\beagleboneblack.gel`
+3. Open serial terminal (e.g. PuTTY, TeraTerm) — 115200 baud
+4. Observe output:
+   ```
+   === ILI9341 LCD DEMO ===
+   SPI1 DMA, DC=P8_26, RST=P8_19
 
-## Build & Flash
+   EDMA driver initialization PASS.
+   SPI initialized for LCD
+   ILI9341_Init() done
+   ```
+5. LCD will flash red briefly, then cycle through graphics demos.
 
-### Requirements
-- **CCS (Code Composer Studio)** 12.x
-- **Processor SDK RTOS AM335x** 6.03
-- **EDMA3 LLD** 2.12
-- **TI ARM Compiler** (cg_xml 2.61+)
+## Key Implementation Details
 
-### Build Steps
-1. Import project ke CCS via **File → Import → Code Composer Studio → Existing CCS Project**
-2. Pilih folder workspace
-3. Klik kanan project → **Build Project**
+### DMA Transfer Flow
+1. `Spi1TxByte()` / `Spi1TxBuffer()` prepare TX buffer and call `SPI_transfer()`
+2. EDMA3 hardware transfers data from RAM to SPI FIFO without CPU involvement
+3. On completion, `SPI_callback()` posts `lcdSem` semaphore
+4. Caller blocks on `SPI_osalPendLock(lcdSem)` until transfer finishes
 
-### Output Files
-- `Debug/TIRTOS_AM3352_SPI_ILI9341_DMA.out` — ELF binary (debug)
-- `Debug/TIRTOS_AM3352_SPI_ILI9341_DMA.bin` — Raw binary
+### Cache Coherence
+- **CacheP_wb()** — Write Back: flushes CPU cache before DMA reads TX data
+- **CacheP_wbInv()** — Write Back + Invalidate: prepares RX buffer for DMA write
+- **CacheP_Inv()** — Invalidate: refreshes CPU cache after DMA writes RX data
 
-### Flashing
-Gunakan CCS **Target → Connect** dan **Debug** untuk load ke board AM3352.
-
-## Pin Mapping
-
-### SPI1 (MCSPI1)
-| Signal | Pin | Function |
-|--------|-----|----------|
-| SCK | P9_31 | SPI clock |
-| MOSI | P9_30 | Master Out Slave In |
-| CS0 | P9_28 | Chip Select 0 |
-
-### GPIO
-| Signal | Pin | GPIO |
-|--------|-----|------|
-| LCD_DC | P8_26 | GPIO1[29] |
-| LCD_RST | P8_19 | GPIO0[22] |
-
-## Debug Output
-
-Output debug ditampilkan melalui **UART** menggunakan `UART_printf()` via `SPI_log()` macro. Lihat console CCS Serial Terminal untuk melihat log:
-
-```
-=== ILI9341 LCD DEMO ===
-SPI1 DMA, DC=P8_26, RST=P8_19
-
-EDMA driver initialization PASS.
-SPI initialized for LCD
-ILI9341_Init() done
-```
-
-## Key APIs
-
-### ILI9341 Driver
-```c
-void ILI9341_Init(void);
-void ILI9341_FillScreen(uint16_t color);
-void ILI9341_FillRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
-void ILI9341_DrawPixel(uint16_t x, uint16_t y, uint16_t color);
-void ILI9341_DrawLine(int16_t x0, int16_t y0, int16_t x1, int16_t y1, uint16_t color);
-void ILI9341_DrawRect(uint16_t x, uint16_t y, uint16_t w, uint16_t h, uint16_t color);
-void ILI9341_DrawCircle(int16_t cx, int16_t cy, int16_t r, uint16_t color);
-void ILI9341_FillCircle(int16_t cx, int16_t cy, int16_t r, uint16_t color);
-void ILI9341_DrawChar(uint16_t x, uint16_t y, char c, uint16_t fg, uint16_t bg);
-void ILI9341_DrawString(uint16_t x, uint16_t y, const char *s, uint16_t fg, uint16_t bg);
-void ILI9341_WritePixels(const uint16_t *pixels, uint32_t count);
-```
-
-### Simple GFX Demos
-```c
-void simple_gfx_demo_color_bands(void);
-void simple_gfx_demo_shapes(void);
-void simple_gfx_demo_text(void);
-void simple_gfx_demo_pixel_grid(void);
-```
-
-### Utilities
-```c
-void Spi1TxByte(uint8_t b);
-void Spi1TxBuffer(const uint8_t *buf, uint32_t len);
-void LcdDcLow(void);
-void LcdDcHigh(void);
-void LcdRstLow(void);
-void LcdRstHigh(void);
-void delay(uint32_t ms);
-```
-
-## Known Issues & Notes
-
-- **Cache disabled** di `tirtos_am3352_spi_ili9341_dma.cfg` (`Cache.enableCache = false`). Memory access tidak di-cache untuk menghindari coherency issues dengan peripheral registers.
-- **MMU enabled** dengan section descriptor untuk peripheral registers (non-cacheable, non-executable).
-- **HWI pointer cast** pada `sample_am335x_arm_int_reg.c` diperlukan karena perbedaan tipe alias antara EDMA3 LLD sample (BIOS 6.x) dan header `Hwi.h` modern.
-- LCD demo berjalan **looping terus-menerus** tanpa exit condition.
-
-## License
-
-Based on Texas Instruments EDMA3 LLD Sample Code (BSD-style license).
+### LCD Initialization Sequence
+1. GPIO RST high → low (10ms) → high (10ms) → wait 120ms
+2. Send ILI9341 command sequence (power, gamma, column/page address, display on)
+3. Total init takes ~170ms (10ms reset + 120ms wait + command transmission)
