@@ -110,6 +110,7 @@ Quick summary:
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_V2/`**](./Examples/TIRTOS_AM3352_SPI_TX_V2/) — SPI1 TX baseline v2 with hardware CS: continuous `0xAF` loop @ 100 kHz. Cleaned project structure with local SOC files and absolute PDK paths.
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_TX_DMA/`**](./Examples/TIRTOS_AM3352_SPI_TX_DMA/) — SPI1 TX with EDMA3 DMA: continuous `0xAF` loopback test (MOSI→MISO jumper), callback-based non-blocking transfer with cache management (WB/Inv).
 - 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_DMA/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_DMA/) — ILI9341 2.8" TFT LCD over SPI1 @ 24 MHz with EDMA3 DMA: color bands, shapes, text, pixel grid demos. GPIO DC/RST control, cache management for DMA-coherent memory.
+- 🟧 [**`Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL_DMA/`**](./Examples/TIRTOS_AM3352_SPI_ILI9341_LVGL_DMA/) — ILI9341 2.8" TFT LCD with LVGL v9.2.1 Music Demo over SPI1 @ 24 MHz + EDMA3 DMA. Double-buffered stripe-based flush (~1 FPS animation, ~30 FPS static). 2 frame buffers (~307 KB), embedded Montserrat fonts.
 
 ---
 
@@ -133,6 +134,7 @@ Quick summary:
 | `TIRTOS_AM3352_SPI_TX_V2` | ✅ Stable | SPI1 TX continuous `0xAF` loop @ 100 kHz (cleaned structure) |
 | `TIRTOS_AM3352_SPI_TX_DMA` | ✅ Stable | SPI1 TX with EDMA3 DMA + cache management, loopback test |
 | `TIRTOS_AM3352_SPI_ILI9341_DMA` | ✅ Stable | ILI9341 2.8" TFT LCD over SPI1 @ 24 MHz with EDMA3 DMA |
+| `TIRTOS_AM3352_SPI_ILI9341_LVGL_DMA` | ✅ Stable | ILI9341 + LVGL v9.2.1 Music Demo over SPI1 @ 24 MHz + EDMA3 DMA |
 
 ---
 
@@ -186,7 +188,8 @@ Workspace_12/
     ├── TIRTOS_AM3352_NIMU_FTP/             ← SYS/BIOS NIMU FTP Server (port 21, active mode)
     ├── TIRTOS_AM3352_SPI_TX_V2/            ← SYS/BIOS SPI1 TX continuous 0xAF loop
     ├── TIRTOS_AM3352_SPI_TX_DMA/           ← SYS/BIOS SPI1 TX with EDMA3 DMA
-    └── TIRTOS_AM3352_SPI_ILI9341_DMA/      ← SYS/BIOS ILI9341 LCD over SPI1 + EDMA3
+    ├── TIRTOS_AM3352_SPI_ILI9341_DMA/      ← SYS/BIOS ILI9341 LCD over SPI1 + EDMA3
+    └── TIRTOS_AM3352_SPI_ILI9341_LVGL_DMA/ ← SYS/BIOS ILI9341 + LVGL v9.2.1 Music Demo over SPI1 + EDMA3
 ```
 
 ---

@@ -174,6 +174,7 @@ In CCS:
     - `TIRTOS_AM3352_SPI_TX_V2` — SPI1 TX continuous `0xAF` loop @ 100 kHz (cleaned project structure)
     - `TIRTOS_AM3352_SPI_TX_DMA` — SPI1 TX with EDMA3 DMA: callback-based non-blocking transfer, cache management, MOSI→MISO loopback
     - `TIRTOS_AM3352_SPI_ILI9341_DMA` — ILI9341 2.8" TFT LCD over SPI1 @ 24 MHz with EDMA3 DMA: color bands, shapes, text, pixel grid demos
+    - `TIRTOS_AM3352_SPI_ILI9341_LVGL_DMA` — ILI9341 + LVGL v9.2.1 Music Demo over SPI1 @ 24 MHz + EDMA3 DMA: double-buffered stripe flush, ~1 FPS animation, embedded Montserrat fonts
 
 4. **Leave "Copy projects into workspace" UNCHECKED.** The projects in this repo are already self-contained and portable — copying them into a separate workspace folder defeats the purpose.
 
