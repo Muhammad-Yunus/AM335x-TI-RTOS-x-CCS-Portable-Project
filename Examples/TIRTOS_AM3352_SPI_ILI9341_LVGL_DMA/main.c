@@ -33,8 +33,6 @@
 /* ILI9341 LCD driver */
 #include "ili9341.h"
 
-/* Simple graphics demos */
-#include "simple_gfx.h"
 
 /* Utility helpers (GPIO, delay) */
 #include "utils.h"
@@ -65,17 +63,6 @@
 /* EDMA3 handle — used by SPI driver for DMA transfers */
 static EDMA3_RM_Handle gEdmaHandle = NULL;
 
-/* RX/TX buffers for SPI loopback test (128 bytes, cache-aligned) */
-unsigned char masterRxBuffer[128] __attribute__ ((aligned (128)));
-unsigned char masterTxBuffer[128] __attribute__ ((aligned (128)));
-
-/* SPI transaction object (reused across transfers) */
-SPI_Transaction   transaction;
-
-/* Semaphore params for callback-based blocking lock */
-SemaphoreP_Params cbSemParams;
-SemaphoreP_Handle cbSem = NULL;
-
 /* LCD-specific synchronization */
 static SemaphoreP_Handle lcdSem = NULL;       /* Signals LCD transfer done */
 static bool lcdTransferDone = false;          /* Flag to avoid double-post */
@@ -98,9 +85,6 @@ void SPI_callback(SPI_Handle handle, SPI_Transaction *transaction);
 
 /* SPI peripheral configuration (FIFO, DMA, channel settings) */
 static void SPI_initConfig(uint32_t instance);
-
-/* LCD demo task — entry point for the main application */
-Void lcd_demo_task(UArg arg0, UArg arg1);
 
 /* SPI write helpers — blocking via DMA callback semaphore */
 void Spi1TxByte(uint8_t b);
@@ -149,10 +133,6 @@ static EDMA3_RM_Handle MCSPIApp_edmaInit(void)
  */
 void SPI_callback(SPI_Handle handle, SPI_Transaction *transaction)
 {
-    /* Signal general callback semaphore */
-    if (cbSem != NULL) {
-        SPI_osalPostLock(cbSem);
-    }
     /* Signal LCD semaphore only once per transfer */
     if (lcdSem != NULL && !lcdTransferDone) {
         lcdTransferDone = true;
@@ -255,97 +235,6 @@ void Spi1TxBuffer(const uint8_t *buf, uint32_t len)
 }
 
 /**
- * lcd_demo_task — Main application task
- *
- * Flow:
- *   1. Print banner to UART
- *   2. Override pinmux for SPI1 + enable GPIO0 clock
- *   3. Initialize SPI + EDMA3
- *   4. Create semaphores for DMA callback synchronization
- *   5. Open SPI1 at 24 MHz in callback mode
- *   6. Perform LCD hardware reset (RST + DC timing)
- *   7. Send ILI9341 init command sequence
- *   8. Flash red screen briefly as visual confirmation
- *   9. Enter infinite loop cycling through graphics demos
- */
-Void lcd_demo_task(UArg arg0, UArg arg1)
-{
-    SPI_Handle        spi;
-    SPI_Params        spiParams;
-    uint32_t          instance;
-
-    /* --- Banner --- */
-    SPI_log("\r\n=== ILI9341 LCD DEMO ===\r\n");
-    SPI_log("SPI1 DMA, DC=P8_26, RST=P8_19\r\n\r\n");
-
-    /* --- Pinmux override for SPI1 + GPIO0 --- */
-    HWREG(SOC_CONTROL_REGS + 0x87C) = 0x00000007;
-    HWREG(SOC_CONTROL_REGS + 0x820) = 0x00000007;
-
-    Gpio0ClockEnable();
-    GPIO_init();
-
-    /* --- SPI subsystem --- */
-    SPI_init();
-
-    instance = (uint32_t)BOARD_MCSPI_MASTER_INSTANCE - 1;
-    SPI_initConfig(instance);
-
-    SPI_osalSemParamsInit(&cbSemParams);
-    cbSemParams.mode = SemaphoreP_Mode_BINARY;
-    cbSem = SPI_osalCreateBlockingLock(0, &cbSemParams);
-
-    lcdSem = SemaphoreP_create(0, NULL);
-
-    /* --- SPI parameters: 24 MHz, callback mode --- */
-    SPI_Params_init(&spiParams);
-    spiParams.transferMode = SPI_MODE_CALLBACK;
-    spiParams.transferCallbackFxn = SPI_callback;
-    spiParams.transferTimeout = SPI_TIMEOUT_VALUE;
-    spiParams.bitRate = 24000000;
-
-    spi = SPI_open(instance, &spiParams);
-    gSpiLcdHandle = spi;
-
-    if (spi == NULL) {
-        SPI_log("Error initializing SPI for LCD\r\n");
-        while (true) {
-            Task_sleep(50000);
-        }
-    } else {
-        SPI_log("SPI initialized for LCD\r\n");
-    }
-
-    Task_sleep(100);
-
-    /* --- LCD Hardware Reset Sequence --- */
-    /* Hold RST high, then low for 10ms, then high again */
-    LcdRstHigh();
-    Task_sleep(10);
-    LcdRstLow();
-    Task_sleep(10);
-    LcdRstHigh();
-    /* Wait for LCD controller to wake up */
-    Task_sleep(120);
-
-    /* --- ILI9341 Initialization --- */
-    ILI9341_Init();
-    SPI_log("ILI9341_Init() done\r\n");
-
-    /* Visual confirmation: flash red screen */
-    ILI9341_FillScreen(ILI9341_COLOR_RED);
-    Task_sleep(500);
-
-    /* --- Main Demo Loop --- */
-    while (1) {
-        simple_gfx_demo_color_bands();
-        simple_gfx_demo_shapes();
-        simple_gfx_demo_text();
-        simple_gfx_demo_pixel_grid();
-    }
-}
-
-/**
  * lvgl_tick — SYS/BIOS Clock callback for LVGL internal timekeeping
  */
 Void lvgl_tick(UArg arg0)
@@ -375,18 +264,14 @@ Void lvgl_demo_task(UArg arg0, UArg arg1)
     instance = (uint32_t)BOARD_MCSPI_MASTER_INSTANCE - 1;
     SPI_initConfig(instance);
 
-    SPI_osalSemParamsInit(&cbSemParams);
-    cbSemParams.mode = SemaphoreP_Mode_BINARY;
-    cbSem = SPI_osalCreateBlockingLock(0, &cbSemParams);
-
     lcdSem = SemaphoreP_create(0, NULL);
 
-    /* --- SPI parameters: 24 MHz, callback mode --- */
+    /* --- SPI parameters: 40 MHz, callback mode --- */
     SPI_Params_init(&spiParams);
     spiParams.transferMode = SPI_MODE_CALLBACK;
     spiParams.transferCallbackFxn = SPI_callback;
     spiParams.transferTimeout = SPI_TIMEOUT_VALUE;
-    spiParams.bitRate = 24000000;
+    spiParams.bitRate = 40000000;
 
     spi = SPI_open(instance, &spiParams);
     gSpiLcdHandle = spi;
